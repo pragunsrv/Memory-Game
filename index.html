@@ -14,13 +14,23 @@
                 <option value="easy">Easy</option>
                 <option value="medium">Medium</option>
                 <option value="hard">Hard</option>
+                <option value="custom">Custom</option>
             </select>
         </p>
+        <div id="custom-size" class="hidden">
+            <p>Grid Size: 
+                <input type="number" id="grid-rows" placeholder="Rows" min="2" max="8">
+                <input type="number" id="grid-cols" placeholder="Cols" min="2" max="8">
+            </p>
+        </div>
         <p>Time: <span id="timer">0</span> seconds</p>
         <p>Moves: <span id="moves">0</span></p>
         <p>Score: <span id="score">0</span></p>
+        <p>Hints: <span id="hints">3</span></p>
     </div>
+    <button id="hint-button">Get Hint</button>
     <button id="restart-button">Restart Game</button>
+    <button id="theme-switcher">Switch Theme</button>
     <div class="game-board" id="game-board"></div>
     <div id="end-game-message" class="hidden"></div>
     <div id="leaderboard">

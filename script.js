@@ -3,28 +3,47 @@ const board = document.getElementById('game-board');
 const timerElement = document.getElementById('timer');
 const movesElement = document.getElementById('moves');
 const scoreElement = document.getElementById('score');
+const hintsElement = document.getElementById('hints');
 const restartButton = document.getElementById('restart-button');
+const hintButton = document.getElementById('hint-button');
+const themeSwitcher = document.getElementById('theme-switcher');
 const levelSelect = document.getElementById('level-select');
+const customSizeDiv = document.getElementById('custom-size');
+const gridRowsInput = document.getElementById('grid-rows');
+const gridColsInput = document.getElementById('grid-cols');
 const endGameMessage = document.getElementById('end-game-message');
 const leaderboardList = document.getElementById('leaderboard-list');
-const cardValues = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-let cardPairs, flippedCards, matchedPairs, moveCount, seconds, timerInterval, score;
+const cardImages = [
+    'https://via.placeholder.com/100?text=A',
+    'https://via.placeholder.com/100?text=B',
+    'https://via.placeholder.com/100?text=C',
+    'https://via.placeholder.com/100?text=D',
+    'https://via.placeholder.com/100?text=E',
+    'https://via.placeholder.com/100?text=F',
+    'https://via.placeholder.com/100?text=G',
+    'https://via.placeholder.com/100?text=H',
+];
+let cardPairs, flippedCards, matchedPairs, moveCount, seconds, timerInterval, score, hintsLeft;
 let leaderboard = [];
 
 // Create cards
-function createCard(value) {
+function createCard(imageSrc) {
     const card = document.createElement('div');
     card.classList.add('card');
-    card.dataset.value = value;
+    const img = document.createElement('img');
+    img.src = imageSrc;
+    img.classList.add('hidden');
+    card.appendChild(img);
     card.addEventListener('click', flipCard);
     return card;
 }
 
 // Render game board
-function renderBoard() {
+function renderBoard(rows, cols) {
     board.innerHTML = '';
-    cardPairs.forEach(value => {
-        const card = createCard(value);
+    board.style.gridTemplateColumns = `repeat(${cols}, 100px)`;
+    cardPairs.forEach(imageSrc => {
+        const card = createCard(imageSrc);
         board.appendChild(card);
     });
 }
@@ -63,7 +82,7 @@ function flipCard() {
     if (flippedCards.length === 2 || this.classList.contains('flipped') || this.classList.contains('matched')) return;
 
     this.classList.add('flipped');
-    this.textContent = this.dataset.value;
+    this.querySelector('img').classList.remove('hidden');
     flippedCards.push(this);
     moveCount++;
     movesElement.textContent = moveCount;
@@ -77,7 +96,7 @@ function flipCard() {
 function checkMatch() {
     const [card1, card2] = flippedCards;
 
-    if (card1.dataset.value === card2.dataset.value) {
+    if (card1.querySelector('img').src === card2.querySelector('img').src) {
         card1.classList.add('matched');
         card2.classList.add('matched');
         matchedPairs++;
@@ -93,8 +112,8 @@ function checkMatch() {
     } else {
         card1.classList.remove('flipped');
         card2.classList.remove('flipped');
-        card1.textContent = '';
-        card2.textContent = '';
+        card1.querySelector('img').classList.add('hidden');
+        card2.querySelector('img').classList.add('hidden');
     }
     flippedCards = [];
 }
@@ -113,36 +132,87 @@ function updateLeaderboard() {
 // Restart the game
 function restartGame() {
     const level = levelSelect.value;
+    let rows, cols;
     switch (level) {
         case 'easy':
-            board.className = 'game-board easy';
-            cardPairs = shuffle([...cardValues, ...cardValues]);
+            rows = 4;
+            cols = 4;
+            cardPairs = shuffle([...cardImages, ...cardImages]);
             break;
         case 'medium':
-            board.className = 'game-board medium';
-            cardPairs = shuffle([...cardValues, ...cardValues, 'I', 'J', 'K', 'L']);
+            rows = 4;
+            cols = 6;
+            cardPairs = shuffle([...cardImages, ...cardImages, 'https://via.placeholder.com/100?text=I', 'https://via.placeholder.com/100?text=J', 'https://via.placeholder.com/100?text=K', 'https://via.placeholder.com/100?text=L']);
             break;
         case 'hard':
-            board.className = 'game-board hard';
-            cardPairs = shuffle([...cardValues, ...cardValues, 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P']);
+            rows = 4;
+            cols = 8;
+            cardPairs = shuffle([...cardImages, ...cardImages, 'https://via.placeholder.com/100?text=I', 'https://via.placeholder.com/100?text=J', 'https://via.placeholder.com/100?text=K', 'https://via.placeholder.com/100?text=L', 'https://via.placeholder.com/100?text=M', 'https://via.placeholder.com/100?text=N', 'https://via.placeholder.com/100?text=O', 'https://via.placeholder.com/100?text=P']);
+            break;
+        case 'custom':
+            rows = parseInt(gridRowsInput.value) || 4;
+            cols = parseInt(gridColsInput.value) || 4;
+            const numPairs = (rows * cols) / 2;
+            cardPairs = shuffle([...cardImages.slice(0, numPairs), ...cardImages.slice(0, numPairs)]);
             break;
     }
+    board.className = 'game-board';
     flippedCards = [];
     matchedPairs = 0;
     moveCount = 0;
     seconds = 0;
     score = 0;
+    hintsLeft = 3;
     movesElement.textContent = moveCount;
     scoreElement.textContent = score;
+    hintsElement.textContent = hintsLeft;
     endGameMessage.classList.add('hidden');
-    renderBoard();
+    renderBoard(rows, cols);
     startTimer();
+}
+
+// Hint system
+function getHint() {
+    if (hintsLeft > 0 && flippedCards.length < 2) {
+        const unmatchedCards = Array.from(document.querySelectorAll('.card:not(.flipped):not(.matched)'));
+        if (unmatchedCards.length >= 2) {
+            const randomIndex1 = Math.floor(Math.random() * unmatchedCards.length);
+            let randomIndex2;
+            do {
+                randomIndex2 = Math.floor(Math.random() * unmatchedCards.length);
+            } while (randomIndex1 === randomIndex2);
+            const hintCard1 = unmatchedCards[randomIndex1];
+            const hintCard2 = unmatchedCards[randomIndex2];
+            hintCard1.classList.add('flipped');
+            hintCard1.querySelector('img').classList.remove('hidden');
+            hintCard2.classList.add('flipped');
+            hintCard2.querySelector('img').classList.remove('hidden');
+            setTimeout(() => {
+                hintCard1.classList.remove('flipped');
+                hintCard1.querySelector('img').classList.add('hidden');
+                hintCard2.classList.remove('flipped');
+                hintCard2.querySelector('img').classList.add('hidden');
+            }, 1000);
+            hintsLeft--;
+            hintsElement.textContent = hintsLeft;
+        }
+    }
+}
+
+// Theme switcher
+function switchTheme() {
+    document.body.classList.toggle('dark');
 }
 
 // Initialize game
 function initGame() {
-    levelSelect.addEventListener('change', restartGame);
+    levelSelect.addEventListener('change', () => {
+        customSizeDiv.classList.toggle('hidden', levelSelect.value !== 'custom');
+        restartGame();
+    });
     restartButton.addEventListener('click', restartGame);
+    hintButton.addEventListener('click', getHint);
+    themeSwitcher.addEventListener('click', switchTheme);
     restartGame();
 }
 

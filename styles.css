@@ -5,6 +5,12 @@ body {
     background-color: #f0f0f0;
     margin: 0;
     padding: 20px;
+    transition: background-color 0.3s;
+}
+
+body.dark {
+    background-color: #333;
+    color: #fff;
 }
 
 h1 {
@@ -20,7 +26,7 @@ h1 {
     margin: 5px 0;
 }
 
-#restart-button {
+#restart-button, #hint-button, #theme-switcher {
     margin-bottom: 20px;
     padding: 10px 20px;
     font-size: 16px;
@@ -31,7 +37,7 @@ h1 {
     cursor: pointer;
 }
 
-#restart-button:hover {
+#restart-button:hover, #hint-button:hover, #theme-switcher:hover {
     background-color: #45a049;
 }
 
@@ -51,22 +57,9 @@ h1 {
 
 .game-board {
     display: grid;
-    grid-template-columns: repeat(4, 100px);
     grid-gap: 10px;
     justify-content: center;
     margin: 0 auto;
-}
-
-.game-board.easy {
-    grid-template-columns: repeat(4, 100px);
-}
-
-.game-board.medium {
-    grid-template-columns: repeat(6, 100px);
-}
-
-.game-board.hard {
-    grid-template-columns: repeat(8, 100px);
 }
 
 .card {
