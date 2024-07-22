@@ -11,6 +11,44 @@ h1 {
     margin-bottom: 20px;
 }
 
+#game-info {
+    margin-bottom: 20px;
+}
+
+#game-info p {
+    font-size: 18px;
+    margin: 5px 0;
+}
+
+#restart-button {
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#restart-button:hover {
+    background-color: #45a049;
+}
+
+#end-game-message {
+    font-size: 18px;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    display: inline-block;
+}
+
+.hidden {
+    display: none;
+}
+
 .game-board {
     display: grid;
     grid-template-columns: repeat(4, 100px);
@@ -31,11 +69,13 @@ h1 {
     color: transparent;
     cursor: pointer;
     position: relative;
+    transition: transform 0.3s;
 }
 
 .card.flipped {
     background-color: #fff;
     color: #000;
+    transform: rotateY(180deg);
 }
 
 .card.matched {

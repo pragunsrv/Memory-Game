@@ -1,11 +1,11 @@
 // script.js
 const board = document.getElementById('game-board');
+const timerElement = document.getElementById('timer');
+const movesElement = document.getElementById('moves');
+const restartButton = document.getElementById('restart-button');
+const endGameMessage = document.getElementById('end-game-message');
 const cardValues = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-let cardPairs = [...cardValues, ...cardValues]; // Duplicate values for pairs
-cardPairs = shuffle(cardPairs);
-
-let flippedCards = [];
-let matchedPairs = 0;
+let cardPairs, flippedCards, matchedPairs, moveCount, seconds, timerInterval;
 
 // Create cards
 function createCard(value) {
@@ -34,13 +34,30 @@ function shuffle(array) {
     return array;
 }
 
+// Start the timer
+function startTimer() {
+    seconds = 0;
+    timerElement.textContent = seconds;
+    timerInterval = setInterval(() => {
+        seconds++;
+        timerElement.textContent = seconds;
+    }, 1000);
+}
+
+// Stop the timer
+function stopTimer() {
+    clearInterval(timerInterval);
+}
+
 // Flip card
 function flipCard() {
-    if (flippedCards.length === 2) return;
+    if (flippedCards.length === 2 || this.classList.contains('flipped') || this.classList.contains('matched')) return;
 
     this.classList.add('flipped');
     this.textContent = this.dataset.value;
     flippedCards.push(this);
+    moveCount++;
+    movesElement.textContent = moveCount;
 
     if (flippedCards.length === 2) {
         setTimeout(checkMatch, 1000);
@@ -56,7 +73,9 @@ function checkMatch() {
         card2.classList.add('matched');
         matchedPairs++;
         if (matchedPairs === cardValues.length) {
-            setTimeout(() => alert('You won!'), 500);
+            stopTimer();
+            endGameMessage.textContent = `You won! Total time: ${seconds} seconds. Total moves: ${moveCount}`;
+            endGameMessage.classList.remove('hidden');
         }
     } else {
         card1.classList.remove('flipped');
@@ -67,5 +86,22 @@ function checkMatch() {
     flippedCards = [];
 }
 
+// Restart the game
+function restartGame() {
+    cardPairs = shuffle([...cardValues, ...cardValues]);
+    flippedCards = [];
+    matchedPairs = 0;
+    moveCount = 0;
+    movesElement.textContent = moveCount;
+    endGameMessage.classList.add('hidden');
+    renderBoard();
+    startTimer();
+}
+
 // Initialize game
-renderBoard();
+function initGame() {
+    restartGame();
+    restartButton.addEventListener('click', restartGame);
+}
+
+initGame();
