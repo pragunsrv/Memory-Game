@@ -57,6 +57,18 @@ h1 {
     margin: 0 auto;
 }
 
+.game-board.easy {
+    grid-template-columns: repeat(4, 100px);
+}
+
+.game-board.medium {
+    grid-template-columns: repeat(6, 100px);
+}
+
+.game-board.hard {
+    grid-template-columns: repeat(8, 100px);
+}
+
 .card {
     width: 100px;
     height: 100px;
@@ -82,4 +94,17 @@ h1 {
     background-color: #4caf50;
     color: #fff;
     cursor: default;
+}
+
+#leaderboard {
+    margin-top: 20px;
+}
+
+#leaderboard h2 {
+    margin-bottom: 10px;
+}
+
+#leaderboard-list {
+    list-style-type: none;
+    padding: 0;
 }

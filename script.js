@@ -2,10 +2,14 @@
 const board = document.getElementById('game-board');
 const timerElement = document.getElementById('timer');
 const movesElement = document.getElementById('moves');
+const scoreElement = document.getElementById('score');
 const restartButton = document.getElementById('restart-button');
+const levelSelect = document.getElementById('level-select');
 const endGameMessage = document.getElementById('end-game-message');
+const leaderboardList = document.getElementById('leaderboard-list');
 const cardValues = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-let cardPairs, flippedCards, matchedPairs, moveCount, seconds, timerInterval;
+let cardPairs, flippedCards, matchedPairs, moveCount, seconds, timerInterval, score;
+let leaderboard = [];
 
 // Create cards
 function createCard(value) {
@@ -49,6 +53,11 @@ function stopTimer() {
     clearInterval(timerInterval);
 }
 
+// Calculate score
+function calculateScore() {
+    return Math.max(1000 - (seconds + moveCount * 5), 0);
+}
+
 // Flip card
 function flipCard() {
     if (flippedCards.length === 2 || this.classList.contains('flipped') || this.classList.contains('matched')) return;
@@ -72,9 +81,13 @@ function checkMatch() {
         card1.classList.add('matched');
         card2.classList.add('matched');
         matchedPairs++;
-        if (matchedPairs === cardValues.length) {
+        if (matchedPairs === cardPairs.length / 2) {
             stopTimer();
-            endGameMessage.textContent = `You won! Total time: ${seconds} seconds. Total moves: ${moveCount}`;
+            score = calculateScore();
+            scoreElement.textContent = score;
+            leaderboard.push({ time: seconds, moves: moveCount, score: score });
+            updateLeaderboard();
+            endGameMessage.textContent = `You won! Time: ${seconds} seconds, Moves: ${moveCount}, Score: ${score}`;
             endGameMessage.classList.remove('hidden');
         }
     } else {
@@ -86,13 +99,41 @@ function checkMatch() {
     flippedCards = [];
 }
 
+// Update leaderboard
+function updateLeaderboard() {
+    leaderboardList.innerHTML = '';
+    leaderboard.sort((a, b) => b.score - a.score);
+    leaderboard.forEach(entry => {
+        const li = document.createElement('li');
+        li.textContent = `Time: ${entry.time}s, Moves: ${entry.moves}, Score: ${entry.score}`;
+        leaderboardList.appendChild(li);
+    });
+}
+
 // Restart the game
 function restartGame() {
-    cardPairs = shuffle([...cardValues, ...cardValues]);
+    const level = levelSelect.value;
+    switch (level) {
+        case 'easy':
+            board.className = 'game-board easy';
+            cardPairs = shuffle([...cardValues, ...cardValues]);
+            break;
+        case 'medium':
+            board.className = 'game-board medium';
+            cardPairs = shuffle([...cardValues, ...cardValues, 'I', 'J', 'K', 'L']);
+            break;
+        case 'hard':
+            board.className = 'game-board hard';
+            cardPairs = shuffle([...cardValues, ...cardValues, 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P']);
+            break;
+    }
     flippedCards = [];
     matchedPairs = 0;
     moveCount = 0;
+    seconds = 0;
+    score = 0;
     movesElement.textContent = moveCount;
+    scoreElement.textContent = score;
     endGameMessage.classList.add('hidden');
     renderBoard();
     startTimer();
@@ -100,8 +141,9 @@ function restartGame() {
 
 // Initialize game
 function initGame() {
-    restartGame();
+    levelSelect.addEventListener('change', restartGame);
     restartButton.addEventListener('click', restartGame);
+    restartGame();
 }
 
 initGame();

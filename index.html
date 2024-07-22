@@ -9,12 +9,24 @@
 <body>
     <h1>Memory Game</h1>
     <div id="game-info">
+        <p>Level: 
+            <select id="level-select">
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+        </p>
         <p>Time: <span id="timer">0</span> seconds</p>
         <p>Moves: <span id="moves">0</span></p>
+        <p>Score: <span id="score">0</span></p>
     </div>
     <button id="restart-button">Restart Game</button>
     <div class="game-board" id="game-board"></div>
     <div id="end-game-message" class="hidden"></div>
+    <div id="leaderboard">
+        <h2>Leaderboard</h2>
+        <ul id="leaderboard-list"></ul>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
