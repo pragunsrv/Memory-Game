@@ -13,6 +13,8 @@ const gridRowsInput = document.getElementById('grid-rows');
 const gridColsInput = document.getElementById('grid-cols');
 const endGameMessage = document.getElementById('end-game-message');
 const leaderboardList = document.getElementById('leaderboard-list');
+const profileNameInput = document.getElementById('profile-name');
+const saveProfileButton = document.getElementById('save-profile');
 const cardImages = [
     'https://via.placeholder.com/100?text=A',
     'https://via.placeholder.com/100?text=B',
@@ -25,6 +27,7 @@ const cardImages = [
 ];
 let cardPairs, flippedCards, matchedPairs, moveCount, seconds, timerInterval, score, hintsLeft;
 let leaderboard = [];
+let userProfile = { name: '', highScore: 0 };
 
 // Create cards
 function createCard(imageSrc) {
@@ -104,7 +107,7 @@ function checkMatch() {
             stopTimer();
             score = calculateScore();
             scoreElement.textContent = score;
-            leaderboard.push({ time: seconds, moves: moveCount, score: score });
+            leaderboard.push({ name: userProfile.name, time: seconds, moves: moveCount, score: score });
             updateLeaderboard();
             endGameMessage.textContent = `You won! Time: ${seconds} seconds, Moves: ${moveCount}, Score: ${score}`;
             endGameMessage.classList.remove('hidden');
@@ -124,7 +127,7 @@ function updateLeaderboard() {
     leaderboard.sort((a, b) => b.score - a.score);
     leaderboard.forEach(entry => {
         const li = document.createElement('li');
-        li.textContent = `Time: ${entry.time}s, Moves: ${entry.moves}, Score: ${entry.score}`;
+        li.textContent = `Name: ${entry.name}, Time: ${entry.time}s, Moves: ${entry.moves}, Score: ${entry.score}`;
         leaderboardList.appendChild(li);
     });
 }
@@ -142,12 +145,12 @@ function restartGame() {
         case 'medium':
             rows = 4;
             cols = 6;
-            cardPairs = shuffle([...cardImages, ...cardImages, 'https://via.placeholder.com/100?text=I', 'https://via.placeholder.com/100?text=J', 'https://via.placeholder.com/100?text=K', 'https://via.placeholder.com/100?text=L']);
+            cardPairs = shuffle([...cardImages, ...cardImages, ...cardImages.slice(0, 4)]);
             break;
         case 'hard':
             rows = 4;
             cols = 8;
-            cardPairs = shuffle([...cardImages, ...cardImages, 'https://via.placeholder.com/100?text=I', 'https://via.placeholder.com/100?text=J', 'https://via.placeholder.com/100?text=K', 'https://via.placeholder.com/100?text=L', 'https://via.placeholder.com/100?text=M', 'https://via.placeholder.com/100?text=N', 'https://via.placeholder.com/100?text=O', 'https://via.placeholder.com/100?text=P']);
+            cardPairs = shuffle([...cardImages, ...cardImages, ...cardImages.slice(0, 8)]);
             break;
         case 'custom':
             rows = parseInt(gridRowsInput.value) || 4;
@@ -204,8 +207,24 @@ function switchTheme() {
     document.body.classList.toggle('dark');
 }
 
+// Save user profile
+function saveProfile() {
+    const profileName = profileNameInput.value.trim();
+    if (profileName) {
+        userProfile.name = profileName;
+        alert(`Profile saved! Hi ${userProfile.name}`);
+    } else {
+        alert('Please enter a name to save your profile.');
+    }
+}
+
 // Initialize game
 function initGame() {
+    if (!saveProfileButton) {
+        console.error('Profile save button not found!');
+        return;
+    }
+
     levelSelect.addEventListener('change', () => {
         customSizeDiv.classList.toggle('hidden', levelSelect.value !== 'custom');
         restartGame();
@@ -213,6 +232,7 @@ function initGame() {
     restartButton.addEventListener('click', restartGame);
     hintButton.addEventListener('click', getHint);
     themeSwitcher.addEventListener('click', switchTheme);
+    saveProfileButton.addEventListener('click', saveProfile);
     restartGame();
 }
 
