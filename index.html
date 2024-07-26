@@ -7,48 +7,48 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
+    <header class="header">
         <h1>Memory Game</h1>
-        <button id="theme-switcher">Switch Theme</button>
+        <button id="theme-switcher" class="button">Switch Theme</button>
     </header>
     <main>
-        <section id="game-settings">
+        <section id="game-settings" class="settings">
             <label for="level-select">Select Level:</label>
-            <select id="level-select">
+            <select id="level-select" class="select">
                 <option value="easy">Easy</option>
                 <option value="medium">Medium</option>
                 <option value="hard">Hard</option>
                 <option value="custom">Custom</option>
             </select>
-            <div id="custom-size" class="hidden">
+            <div id="custom-size" class="hidden custom-size">
                 <label for="grid-rows">Rows:</label>
-                <input type="number" id="grid-rows" min="2" value="4">
+                <input type="number" id="grid-rows" min="2" value="4" class="input">
                 <label for="grid-cols">Cols:</label>
-                <input type="number" id="grid-cols" min="2" value="4">
+                <input type="number" id="grid-cols" min="2" value="4" class="input">
             </div>
-            <button id="restart-button">Restart Game</button>
-            <button id="hint-button">Get Hint</button>
+            <button id="restart-button" class="button">Restart Game</button>
+            <button id="hint-button" class="button">Get Hint</button>
         </section>
         <section id="game-board" class="game-board"></section>
-        <section id="game-info">
+        <section id="game-info" class="info">
             <div>Time: <span id="timer">0</span> seconds</div>
             <div>Moves: <span id="moves">0</span></div>
             <div>Score: <span id="score">0</span></div>
             <div>Hints Left: <span id="hints">3</span></div>
         </section>
-        <section id="end-game-message" class="hidden"></section>
-        <section id="user-profile">
+        <section id="end-game-message" class="hidden end-message"></section>
+        <section id="user-profile" class="profile">
             <label for="profile-name">Profile Name:</label>
-            <input type="text" id="profile-name">
-            <button id="save-profile">Save Profile</button>
+            <input type="text" id="profile-name" class="input">
+            <button id="save-profile" class="button">Save Profile</button>
         </section>
-        <section id="leaderboard">
+        <section id="leaderboard" class="leaderboard">
             <h2>Leaderboard</h2>
-            <ul id="leaderboard-list"></ul>
+            <ul id="leaderboard-list" class="list"></ul>
         </section>
-        <section id="achievements">
+        <section id="achievements" class="achievements">
             <h2>Achievements</h2>
-            <ul id="achievements-list"></ul>
+            <ul id="achievements-list" class="list"></ul>
         </section>
     </main>
     <script src="script.js"></script>

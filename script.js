@@ -341,3 +341,52 @@ function initGame() {
 }
 
 initGame();
+// Flip card
+function flipCard() {
+    if (flippedCards.length === 2 || this.classList.contains('flipped') || this.classList.contains('matched')) return;
+
+    this.classList.add('flipped');
+    const img = this.querySelector('img');
+    if (img) {
+        img.classList.remove('hidden');
+    }
+    flippedCards.push(this);
+    moveCount++;
+    movesElement.textContent = moveCount;
+
+    if (flippedCards.length === 2) {
+        setTimeout(checkMatch, 1000);
+    }
+}
+
+// Check for match
+function checkMatch() {
+    if (flippedCards.length !== 2) return;
+
+    const [card1, card2] = flippedCards;
+    const img1 = card1.querySelector('img');
+    const img2 = card2.querySelector('img');
+
+    if (img1 && img2) {
+        if (img1.src === img2.src) {
+            card1.classList.add('matched');
+            card2.classList.add('matched');
+            matchedPairs++;
+            if (matchedPairs === cardPairs.length / 2) {
+                stopTimer();
+                score = calculateScore();
+                scoreElement.textContent = score;
+                leaderboard.push({ time: seconds, moves: moveCount, score: score });
+                updateLeaderboard();
+                endGameMessage.textContent = `You won! Time: ${seconds} seconds, Moves: ${moveCount}, Score: ${score}`;
+                endGameMessage.classList.remove('hidden');
+            }
+        } else {
+            card1.classList.remove('flipped');
+            card2.classList.remove('flipped');
+            if (img1) img1.classList.add('hidden');
+            if (img2) img2.classList.add('hidden');
+        }
+    }
+    flippedCards = [];
+}

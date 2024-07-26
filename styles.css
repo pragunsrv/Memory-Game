@@ -1,53 +1,88 @@
 /* styles.css */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, color 0.3s;
+    background-color: #f9f9f9;
+    color: #333;
 }
 
-header {
-    background-color: #333;
-    color: #fff;
+.header {
+    background-color: #4caf50;
+    color: white;
     padding: 10px;
     text-align: center;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
 }
 
-header h1 {
+.header h1 {
     margin: 0;
 }
 
-#theme-switcher {
-    background-color: #555;
+.button {
+    background-color: #4caf50;
     border: none;
-    color: #fff;
-    padding: 5px 10px;
+    color: white;
+    padding: 10px 20px;
+    margin: 10px 5px;
+    border-radius: 5px;
     cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
-main {
-    padding: 20px;
+.button:hover {
+    background-color: #45a049;
 }
 
-#game-settings {
-    margin-bottom: 20px;
+.button:active {
+    transform: scale(0.98);
 }
 
-#game-board {
+.select, .input {
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    width: calc(100% - 24px); /* Adjust width for better alignment */
+}
+
+.settings, .info, .profile, .leaderboard, .achievements {
+    margin: 80px auto 20px auto;
+    max-width: 600px;
+    text-align: center;
+}
+
+.hidden {
+    display: none;
+}
+
+.game-board {
     display: grid;
     gap: 10px;
+    justify-content: center;
+    margin: 0 auto;
 }
 
 .card {
     width: 100px;
     height: 100px;
-    background-color: #f0f0f0;
+    background-color: #e0e0e0;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     position: relative;
+    transition: transform 0.3s, background-color 0.3s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .card img {
@@ -56,67 +91,72 @@ main {
     object-fit: cover;
 }
 
-.card.flipped img {
-    display: block;
+.card.flipped {
+    background-color: #ffffff;
+    transform: rotateY(180deg);
 }
 
-.card.hidden {
-    display: none;
+.card.matched {
+    background-color: #4caf50;
+    color: #fff;
 }
 
-.hidden {
-    display: none;
+.info, .end-message {
+    font-size: 1.2em;
 }
 
-#game-info {
-    margin-top: 20px;
+.end-message {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
 }
 
-#end-game-message {
-    margin-top: 20px;
-    font-size: 1.5em;
-    font-weight: bold;
+.profile {
+    margin: 20px auto;
 }
 
-#user-profile {
-    margin-top: 20px;
-}
-
-#leaderboard,
-#achievements {
-    margin-top: 20px;
-}
-
-#leaderboard-list,
-#achievements-list {
+.list {
     list-style: none;
     padding: 0;
 }
 
-#leaderboard-list li,
-#achievements-list li {
-    padding: 5px;
+.list li {
+    padding: 10px;
     border-bottom: 1px solid #ddd;
 }
 
-#leaderboard-list li.bold {
-    font-weight: bold;
-    color: gold;
+.list li:last-child {
+    border-bottom: none;
 }
 
 .dark {
     background-color: #121212;
-    color: #fff;
+    color: #f9f9f9;
 }
 
-.dark #game-board .card {
+.dark .header {
     background-color: #333;
 }
 
-.dark #game-info,
-.dark #end-game-message,
-.dark #user-profile,
-.dark #leaderboard,
-.dark #achievements {
-    color: #fff;
+.dark .button {
+    background-color: #555;
+}
+
+.dark .button:hover {
+    background-color: #666;
+}
+
+.dark .card {
+    background-color: #333;
+    color: #f9f9f9;
+}
+
+.dark .end-message {
+    background-color: #333;
+    color: #f9f9f9;
+}
+
+.dark .list li {
+    border-bottom: 1px solid #444;
 }
