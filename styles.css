@@ -1,112 +1,122 @@
 /* styles.css */
 body {
     font-family: Arial, sans-serif;
-    text-align: center;
-    background-color: #f0f0f0;
     margin: 0;
-    padding: 20px;
+    padding: 0;
+    box-sizing: border-box;
     transition: background-color 0.3s;
 }
 
-body.dark {
+header {
     background-color: #333;
     color: #fff;
+    padding: 10px;
+    text-align: center;
 }
 
-h1 {
-    margin-bottom: 20px;
+header h1 {
+    margin: 0;
 }
 
-#game-info {
-    margin-bottom: 20px;
-}
-
-#game-info p {
-    font-size: 18px;
-    margin: 5px 0;
-}
-
-#restart-button, #hint-button, #theme-switcher, #save-profile {
-    margin-bottom: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #4caf50;
-    color: white;
+#theme-switcher {
+    background-color: #555;
     border: none;
-    border-radius: 5px;
+    color: #fff;
+    padding: 5px 10px;
     cursor: pointer;
 }
 
-#restart-button:hover, #hint-button:hover, #theme-switcher:hover, #save-profile:hover {
-    background-color: #45a049;
+main {
+    padding: 20px;
 }
 
-#end-game-message {
-    font-size: 18px;
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #fff;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    display: inline-block;
+#game-settings {
+    margin-bottom: 20px;
+}
+
+#game-board {
+    display: grid;
+    gap: 10px;
+}
+
+.card {
+    width: 100px;
+    height: 100px;
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card.flipped img {
+    display: block;
+}
+
+.card.hidden {
+    display: none;
 }
 
 .hidden {
     display: none;
 }
 
-.game-board {
-    display: grid;
-    grid-gap: 10px;
-    justify-content: center;
-    margin: 0 auto;
-}
-
-.card {
-    width: 100px;
-    height: 100px;
-    background-color: #ddd;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    color: transparent;
-    cursor: pointer;
-    position: relative;
-    transition: transform 0.3s, background-color 0.3s;
-}
-
-.card.flipped {
-    background-color: #fff;
-    color: #000;
-    transform: rotateY(180deg);
-}
-
-.card.matched {
-    background-color: #4caf50;
-    color: #fff;
-    cursor: default;
-}
-
-#leaderboard {
+#game-info {
     margin-top: 20px;
 }
 
-#leaderboard h2 {
-    margin-bottom: 10px;
+#end-game-message {
+    margin-top: 20px;
+    font-size: 1.5em;
+    font-weight: bold;
 }
 
-#leaderboard-list {
-    list-style-type: none;
+#user-profile {
+    margin-top: 20px;
+}
+
+#leaderboard,
+#achievements {
+    margin-top: 20px;
+}
+
+#leaderboard-list,
+#achievements-list {
+    list-style: none;
     padding: 0;
 }
 
-#profile {
-    margin-top: 20px;
+#leaderboard-list li,
+#achievements-list li {
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
 }
 
-#profile input {
-    padding: 10px;
-    font-size: 16px;
+#leaderboard-list li.bold {
+    font-weight: bold;
+    color: gold;
+}
+
+.dark {
+    background-color: #121212;
+    color: #fff;
+}
+
+.dark #game-board .card {
+    background-color: #333;
+}
+
+.dark #game-info,
+.dark #end-game-message,
+.dark #user-profile,
+.dark #leaderboard,
+.dark #achievements {
+    color: #fff;
 }

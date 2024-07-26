@@ -15,6 +15,8 @@ const endGameMessage = document.getElementById('end-game-message');
 const leaderboardList = document.getElementById('leaderboard-list');
 const profileNameInput = document.getElementById('profile-name');
 const saveProfileButton = document.getElementById('save-profile');
+const achievementsList = document.getElementById('achievements-list');
+const settingsForm = document.getElementById('settings-form');
 const audioFlip = new Audio('sounds/flip.mp3');
 const audioMatch = new Audio('sounds/match.mp3');
 const audioHint = new Audio('sounds/hint.mp3');
@@ -27,10 +29,25 @@ const cardImages = [
     'https://via.placeholder.com/100?text=F',
     'https://via.placeholder.com/100?text=G',
     'https://via.placeholder.com/100?text=H',
+    'https://via.placeholder.com/100?text=I',
+    'https://via.placeholder.com/100?text=J',
+    'https://via.placeholder.com/100?text=K',
+    'https://via.placeholder.com/100?text=L',
+    'https://via.placeholder.com/100?text=M',
+    'https://via.placeholder.com/100?text=N',
+    'https://via.placeholder.com/100?text=O',
+    'https://via.placeholder.com/100?text=P',
 ];
+
 let cardPairs, flippedCards, matchedPairs, moveCount, seconds, timerInterval, score, hintsLeft;
 let leaderboard = [];
-let userProfile = { name: '', highScore: 0 };
+let userProfiles = {};
+let currentUserProfile = '';
+let achievements = {
+    firstWin: false,
+    quickWin: false,
+    perfectGame: false,
+};
 
 // Create cards
 function createCard(imageSrc) {
@@ -112,10 +129,11 @@ function checkMatch() {
             stopTimer();
             score = calculateScore();
             scoreElement.textContent = score;
-            leaderboard.push({ name: userProfile.name, time: seconds, moves: moveCount, score: score });
+            leaderboard.push({ name: currentUserProfile, time: seconds, moves: moveCount, score: score });
             updateLeaderboard();
             endGameMessage.textContent = `You won! Time: ${seconds} seconds, Moves: ${moveCount}, Score: ${score}`;
             endGameMessage.classList.remove('hidden');
+            checkAchievements();
             checkHighScore();
         }
     } else {
@@ -134,20 +152,51 @@ function updateLeaderboard() {
     leaderboard.forEach(entry => {
         const li = document.createElement('li');
         li.textContent = `Name: ${entry.name}, Time: ${entry.time}s, Moves: ${entry.moves}, Score: ${entry.score}`;
-        if (entry.score === userProfile.highScore) {
+        if (entry.name === currentUserProfile) {
             li.style.fontWeight = 'bold';
             li.style.color = 'gold';
         }
         leaderboardList.appendChild(li);
     });
+    localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
 }
 
 // Check and update high score
 function checkHighScore() {
-    if (score > userProfile.highScore) {
-        userProfile.highScore = score;
-        alert(`Congratulations ${userProfile.name}! You've achieved a new high score of ${score}`);
+    const profile = userProfiles[currentUserProfile];
+    if (score > profile.highScore) {
+        profile.highScore = score;
+        localStorage.setItem('userProfiles', JSON.stringify(userProfiles));
+        alert(`Congratulations ${currentUserProfile}! You've achieved a new high score of ${score}`);
     }
+}
+
+// Check achievements
+function checkAchievements() {
+    if (!achievements.firstWin) {
+        achievements.firstWin = true;
+        alert('Achievement Unlocked: First Win!');
+    }
+    if (seconds < 30) {
+        achievements.quickWin = true;
+        alert('Achievement Unlocked: Quick Win!');
+    }
+    if (matchedPairs === cardPairs.length / 2 && moveCount === 0) {
+        achievements.perfectGame = true;
+        alert('Achievement Unlocked: Perfect Game!');
+    }
+    updateAchievements();
+}
+
+// Update achievements
+function updateAchievements() {
+    achievementsList.innerHTML = '';
+    for (const [key, value] of Object.entries(achievements)) {
+        const li = document.createElement('li');
+        li.textContent = `${key.replace(/([A-Z])/g, ' $1').toUpperCase()}: ${value ? 'Unlocked' : 'Locked'}`;
+        achievementsList.appendChild(li);
+    }
+    localStorage.setItem('achievements', JSON.stringify(achievements));
 }
 
 // Restart the game
@@ -158,17 +207,17 @@ function restartGame() {
         case 'easy':
             rows = 4;
             cols = 4;
-            cardPairs = shuffle([...cardImages, ...cardImages]);
+            cardPairs = shuffle([...cardImages.slice(0, 8), ...cardImages.slice(0, 8)]);
             break;
         case 'medium':
             rows = 4;
             cols = 6;
-            cardPairs = shuffle([...cardImages, ...cardImages, ...cardImages.slice(0, 4)]);
+            cardPairs = shuffle([...cardImages.slice(0, 12), ...cardImages.slice(0, 12)]);
             break;
         case 'hard':
             rows = 4;
             cols = 8;
-            cardPairs = shuffle([...cardImages, ...cardImages, ...cardImages.slice(0, 8)]);
+            cardPairs = shuffle([...cardImages, ...cardImages]);
             break;
         case 'custom':
             rows = parseInt(gridRowsInput.value) || 4;
@@ -228,25 +277,47 @@ function switchTheme() {
 
 // Save user profile
 function saveProfile() {
-    const profileName = profileNameInput.value.trim();
-    if (profileName) {
-        userProfile.name = profileName;
-        alert(`Profile saved! Hi ${userProfile.name}`);
-        localStorage.setItem('userProfile', JSON.stringify(userProfile));
-        checkHighScore();
+    if (currentUserProfile) {
+        userProfiles[currentUserProfile] = {
+            name: profileNameInput.value,
+            highScore: userProfiles[currentUserProfile]?.highScore || 0,
+        };
+        localStorage.setItem('userProfiles', JSON.stringify(userProfiles));
+        alert('Profile saved successfully!');
+        updateLeaderboard();
     } else {
-        alert('Please enter a name to save your profile.');
+        alert('Please select a user profile.');
     }
 }
 
 // Load user profile
 function loadProfile() {
-    const savedProfile = localStorage.getItem('userProfile');
-    if (savedProfile) {
-        userProfile = JSON.parse(savedProfile);
-        profileNameInput.value = userProfile.name;
+    const savedProfiles = localStorage.getItem('userProfiles');
+    if (savedProfiles) {
+        userProfiles = JSON.parse(savedProfiles);
+    }
+    const savedAchievements = localStorage.getItem('achievements');
+    if (savedAchievements) {
+        achievements = JSON.parse(savedAchievements);
+    }
+    const savedLeaderboard = localStorage.getItem('leaderboard');
+    if (savedLeaderboard) {
+        leaderboard = JSON.parse(savedLeaderboard);
         updateLeaderboard();
     }
+}
+
+// Profile selection
+function selectProfile() {
+    currentUserProfile = profileNameInput.value;
+    if (!currentUserProfile) {
+        alert('Please enter a profile name.');
+        return;
+    }
+    if (!userProfiles[currentUserProfile]) {
+        userProfiles[currentUserProfile] = { name: currentUserProfile, highScore: 0 };
+    }
+    saveProfile();
 }
 
 // Initialize game
@@ -264,6 +335,7 @@ function initGame() {
     hintButton.addEventListener('click', getHint);
     themeSwitcher.addEventListener('click', switchTheme);
     saveProfileButton.addEventListener('click', saveProfile);
+    profileNameInput.addEventListener('change', selectProfile);
     loadProfile();
     restartGame();
 }

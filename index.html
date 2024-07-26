@@ -7,41 +7,50 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Memory Game</h1>
-    <div id="game-info">
-        <p>Level: 
+    <header>
+        <h1>Memory Game</h1>
+        <button id="theme-switcher">Switch Theme</button>
+    </header>
+    <main>
+        <section id="game-settings">
+            <label for="level-select">Select Level:</label>
             <select id="level-select">
                 <option value="easy">Easy</option>
                 <option value="medium">Medium</option>
                 <option value="hard">Hard</option>
                 <option value="custom">Custom</option>
             </select>
-        </p>
-        <div id="custom-size" class="hidden">
-            <p>Grid Size: 
-                <input type="number" id="grid-rows" placeholder="Rows" min="2" max="8">
-                <input type="number" id="grid-cols" placeholder="Cols" min="2" max="8">
-            </p>
-        </div>
-        <p>Time: <span id="timer">0</span> seconds</p>
-        <p>Moves: <span id="moves">0</span></p>
-        <p>Score: <span id="score">0</span></p>
-        <p>Hints: <span id="hints">3</span></p>
-    </div>
-    <button id="hint-button">Get Hint</button>
-    <button id="restart-button">Restart Game</button>
-    <button id="theme-switcher">Switch Theme</button>
-    <div class="game-board" id="game-board"></div>
-    <div id="end-game-message" class="hidden"></div>
-    <div id="leaderboard">
-        <h2>Leaderboard</h2>
-        <ul id="leaderboard-list"></ul>
-    </div>
-    <div id="profile-section">
-        <h2>User Profile</h2>
-        <input type="text" id="profile-name" placeholder="Enter your name">
-        <button id="save-profile">Save Profile</button>
-    </div>
+            <div id="custom-size" class="hidden">
+                <label for="grid-rows">Rows:</label>
+                <input type="number" id="grid-rows" min="2" value="4">
+                <label for="grid-cols">Cols:</label>
+                <input type="number" id="grid-cols" min="2" value="4">
+            </div>
+            <button id="restart-button">Restart Game</button>
+            <button id="hint-button">Get Hint</button>
+        </section>
+        <section id="game-board" class="game-board"></section>
+        <section id="game-info">
+            <div>Time: <span id="timer">0</span> seconds</div>
+            <div>Moves: <span id="moves">0</span></div>
+            <div>Score: <span id="score">0</span></div>
+            <div>Hints Left: <span id="hints">3</span></div>
+        </section>
+        <section id="end-game-message" class="hidden"></section>
+        <section id="user-profile">
+            <label for="profile-name">Profile Name:</label>
+            <input type="text" id="profile-name">
+            <button id="save-profile">Save Profile</button>
+        </section>
+        <section id="leaderboard">
+            <h2>Leaderboard</h2>
+            <ul id="leaderboard-list"></ul>
+        </section>
+        <section id="achievements">
+            <h2>Achievements</h2>
+            <ul id="achievements-list"></ul>
+        </section>
+    </main>
     <script src="script.js"></script>
 </body>
 </html>
