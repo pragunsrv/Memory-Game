@@ -15,6 +15,9 @@ const endGameMessage = document.getElementById('end-game-message');
 const leaderboardList = document.getElementById('leaderboard-list');
 const profileNameInput = document.getElementById('profile-name');
 const saveProfileButton = document.getElementById('save-profile');
+const audioFlip = new Audio('sounds/flip.mp3');
+const audioMatch = new Audio('sounds/match.mp3');
+const audioHint = new Audio('sounds/hint.mp3');
 const cardImages = [
     'https://via.placeholder.com/100?text=A',
     'https://via.placeholder.com/100?text=B',
@@ -89,6 +92,7 @@ function flipCard() {
     flippedCards.push(this);
     moveCount++;
     movesElement.textContent = moveCount;
+    audioFlip.play();
 
     if (flippedCards.length === 2) {
         setTimeout(checkMatch, 1000);
@@ -103,6 +107,7 @@ function checkMatch() {
         card1.classList.add('matched');
         card2.classList.add('matched');
         matchedPairs++;
+        audioMatch.play();
         if (matchedPairs === cardPairs.length / 2) {
             stopTimer();
             score = calculateScore();
@@ -111,6 +116,7 @@ function checkMatch() {
             updateLeaderboard();
             endGameMessage.textContent = `You won! Time: ${seconds} seconds, Moves: ${moveCount}, Score: ${score}`;
             endGameMessage.classList.remove('hidden');
+            checkHighScore();
         }
     } else {
         card1.classList.remove('flipped');
@@ -128,8 +134,20 @@ function updateLeaderboard() {
     leaderboard.forEach(entry => {
         const li = document.createElement('li');
         li.textContent = `Name: ${entry.name}, Time: ${entry.time}s, Moves: ${entry.moves}, Score: ${entry.score}`;
+        if (entry.score === userProfile.highScore) {
+            li.style.fontWeight = 'bold';
+            li.style.color = 'gold';
+        }
         leaderboardList.appendChild(li);
     });
+}
+
+// Check and update high score
+function checkHighScore() {
+    if (score > userProfile.highScore) {
+        userProfile.highScore = score;
+        alert(`Congratulations ${userProfile.name}! You've achieved a new high score of ${score}`);
+    }
 }
 
 // Restart the game
@@ -190,6 +208,7 @@ function getHint() {
             hintCard1.querySelector('img').classList.remove('hidden');
             hintCard2.classList.add('flipped');
             hintCard2.querySelector('img').classList.remove('hidden');
+            audioHint.play();
             setTimeout(() => {
                 hintCard1.classList.remove('flipped');
                 hintCard1.querySelector('img').classList.add('hidden');
@@ -213,8 +232,20 @@ function saveProfile() {
     if (profileName) {
         userProfile.name = profileName;
         alert(`Profile saved! Hi ${userProfile.name}`);
+        localStorage.setItem('userProfile', JSON.stringify(userProfile));
+        checkHighScore();
     } else {
         alert('Please enter a name to save your profile.');
+    }
+}
+
+// Load user profile
+function loadProfile() {
+    const savedProfile = localStorage.getItem('userProfile');
+    if (savedProfile) {
+        userProfile = JSON.parse(savedProfile);
+        profileNameInput.value = userProfile.name;
+        updateLeaderboard();
     }
 }
 
@@ -233,6 +264,7 @@ function initGame() {
     hintButton.addEventListener('click', getHint);
     themeSwitcher.addEventListener('click', switchTheme);
     saveProfileButton.addEventListener('click', saveProfile);
+    loadProfile();
     restartGame();
 }
 
